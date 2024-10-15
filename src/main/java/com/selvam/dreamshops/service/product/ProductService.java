@@ -1,6 +1,7 @@
 package com.selvam.dreamshops.service.product;
 
 import com.selvam.dreamshops.exceptions.ProductNotFoundException;
+import com.selvam.dreamshops.exceptions.ResourceNotFoundException;
 import com.selvam.dreamshops.model.Category;
 import com.selvam.dreamshops.model.Product;
 import com.selvam.dreamshops.repository.CategoryRepository;
@@ -52,14 +53,14 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(()->new ProductNotFoundException("Product Not Found"));
+                .orElseThrow(()->new ResourceNotFoundException("Product Not Found"));
     }
 
     @Override
     public void deleteProductById(Long id) {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete, ()->{
-                    throw new ProductNotFoundException("Product Not Found!");});
+                    throw new ResourceNotFoundException("Product Not Found!");});
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ProductService implements IProductService{
         return productRepository.findById(productId)
                 .map(existingProduct->updateExistingProduct(existingProduct,request))
                 .map(productRepository::save)
-                .orElseThrow(()->new ProductNotFoundException("Product Not Found!"));
+                .orElseThrow(()->new ResourceNotFoundException("Product Not Found!"));
     }
     //User Defined Method
     public Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request)
@@ -93,7 +94,7 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getAllProductsByBrand(String brand) {
-        return productRepository.findByBrandName(brand);
+        return productRepository.findByBrand(brand);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public List<Product> getAllProductsByName(String name) {
+    public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
     }
 
