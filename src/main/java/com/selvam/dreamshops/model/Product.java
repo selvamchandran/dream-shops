@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -19,17 +20,18 @@ public class Product {
     private Long id;
     private String name;
     private String brand;
-    private BigInteger price;
+    private BigDecimal price;
     private int inventory;
     private String description;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images; //If any product is removed, the image associated with the product will also be removed
 
-    public Product(String name, String brand, BigInteger price, int inventory, String description, Category category) {
+    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {
         this.name = name;
         this.brand = brand;
         this.price = price;
