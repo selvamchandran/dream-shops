@@ -71,7 +71,7 @@ public class ImageController {
             if(image!=null)
             {
                 imageService.deleteImageById(imageId);
-                return ResponseEntity.ok(new ApiResponse("Delete sucess!",null));
+                return ResponseEntity.ok(new ApiResponse("Delete success!",null));
             }
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
