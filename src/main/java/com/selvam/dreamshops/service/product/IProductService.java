@@ -1,5 +1,6 @@
 package com.selvam.dreamshops.service.product;
 
+import com.selvam.dreamshops.dto.ProductDto;
 import com.selvam.dreamshops.model.Product;
 import com.selvam.dreamshops.request.AddProductRequest;
 import com.selvam.dreamshops.request.ProductUpdateRequest;
@@ -19,4 +20,8 @@ public interface IProductService {
     List<Product> getProductsByName(String name);
     List<Product> getAllProductsByBrandAndName(String brand, String name);
     Long countProductsByBrandAndName(String brand,String name);
+
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }
