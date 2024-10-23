@@ -2,6 +2,7 @@ package com.selvam.dreamshops.data;
 
 import com.selvam.dreamshops.model.Role;
 import com.selvam.dreamshops.model.User;
+import com.selvam.dreamshops.repository.RoleRepository;
 import com.selvam.dreamshops.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
