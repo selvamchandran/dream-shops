@@ -24,11 +24,12 @@ public class OrderController {
     private final IOrderService orderService;
 
     @PostMapping("/order")
-    public ResponseEntity<ApiResponse> createOrder(Long userId)
+    public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId)
     {
         try {
             Order order = orderService.placeOrder(userId);
-            return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+            OrderDto orderDto = orderService.convertToDto(order);
+            return ResponseEntity.ok(new ApiResponse("Item Order Success!", orderDto));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error Occured!",e.getMessage()));
@@ -48,15 +49,15 @@ public class OrderController {
 
     }
 
-    @GetMapping("/{orderId}/orders")
+    @GetMapping("/{userId}/orders")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId)
     {
         try {
-            List<OrderDto> order = orderService.getUserOrders(userId);
-            return ResponseEntity.ok(new ApiResponse("Item Order Success!", order));
+            List<OrderDto> orderList = orderService.getUserOrders(userId);
+            return ResponseEntity.ok(new ApiResponse("Orders Found!", orderList));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse("Oops!",e.getMessage()));
+                    .body(new ApiResponse("Oops! No Orders Found!",e.getMessage()));
         }
 
     }
