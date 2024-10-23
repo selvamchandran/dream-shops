@@ -11,3 +11,9 @@ public class DreamShopsApplication {
 	}
 
 }
+
+//ToDo
+/*
+1.Add image and check
+2.Cart not empty after deleting
+ */
