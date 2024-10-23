@@ -1,6 +1,7 @@
 package com.selvam.dreamshops.controller;
 
 import com.selvam.dreamshops.dto.ProductDto;
+import com.selvam.dreamshops.exceptions.AlreadyExistsException;
 import com.selvam.dreamshops.exceptions.ProductNotFoundException;
 import com.selvam.dreamshops.exceptions.ResourceNotFoundException;
 import com.selvam.dreamshops.model.Category;
@@ -12,12 +13,12 @@ import com.selvam.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,7 +46,7 @@ public class ProductController {
                     .body(new ApiResponse(e.getMessage(),null));
         }
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product)
     {
@@ -53,12 +54,12 @@ public class ProductController {
             Product theProduct = productService.addProduct(product);
             ProductDto productDto = productService.convertToDto(theProduct);
             return ResponseEntity.ok(new ApiResponse("Add Product Success!",productDto));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(CONFLICT)
                     .body(new ApiResponse(e.getMessage(),null));
         }
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductUpdateRequest product,@PathVariable Long productId)
     {
@@ -72,8 +73,9 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/product/{id}/delete")
-    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId)
+    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("id") Long productId)
     {
         try {
             productService.deleteProductById(productId);
@@ -85,7 +87,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/by/brand-and-name")
-    public ResponseEntity<ApiResponse> getProductByBrandAndName(@PathVariable String brandName, @PathVariable String productName)
+    public ResponseEntity<ApiResponse> getProductByBrandAndName(@RequestParam String brandName, @RequestParam String productName)
     {
         try {
             List<Product> products = productService.getAllProductsByBrandAndName(brandName,productName);
@@ -103,7 +105,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/by/category-and-brand")
-    public ResponseEntity<ApiResponse> getProductByCategoryAndBrand(@PathVariable String categoryName, @PathVariable String brandName)
+    public ResponseEntity<ApiResponse> getProductByCategoryAndBrand(@RequestParam String categoryName, @RequestParam String brandName)
     {
         try {
             List<Product> products = productService.getAllProductsByCategoryAndBrand(categoryName,brandName);
