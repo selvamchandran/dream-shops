@@ -2,6 +2,7 @@ package com.selvam.dreamshops.service.product;
 
 import com.selvam.dreamshops.dto.ImageDto;
 import com.selvam.dreamshops.dto.ProductDto;
+import com.selvam.dreamshops.exceptions.AlreadyExistsException;
 import com.selvam.dreamshops.exceptions.ResourceNotFoundException;
 import com.selvam.dreamshops.model.Category;
 import com.selvam.dreamshops.model.Image;
@@ -31,6 +32,10 @@ public class ProductService implements IProductService{
         //If Yes, set it as the new product category
         //If No, then save it as a new category
         //Then set as the new product category
+        if(productExists(request.getName(),request.getBrand()))
+        {
+            throw new AlreadyExistsException(request.getBrand()+ " " + request.getName()+" already exists, you may update this product instead" );
+        }
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(()->{
                     Category newCategory = new Category(request.getCategory().getName());
@@ -40,6 +45,10 @@ public class ProductService implements IProductService{
         request.setCategory(category);
         return productRepository.save(createProduct(request,category));
 
+    }
+
+    private boolean productExists(String name, String brand) {
+        return productRepository.existsByNameAndBrand(name,brand);
     }
 
     //user defined method
