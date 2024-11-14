@@ -54,7 +54,10 @@ public class OrderController {
     {
         try {
             List<OrderDto> orderList = orderService.getUserOrders(userId);
-            return ResponseEntity.ok(new ApiResponse("Orders Found!", orderList));
+            if(!orderList.isEmpty())
+                return ResponseEntity.ok(new ApiResponse("Orders Found!", orderList));
+            else
+                throw new ResourceNotFoundException(null);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND)
                     .body(new ApiResponse("Oops! No Orders Found!",e.getMessage()));
